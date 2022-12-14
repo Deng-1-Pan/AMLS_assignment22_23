@@ -1,10 +1,10 @@
 import os
 import numpy as np
-
-# from keras.preprocessing import image
-from keras_preprocessing import image
 import cv2
 import dlib
+
+from keras_preprocessing import image
+from tqdm import tqdm
 
 # PATH TO ALL IMAGES
 
@@ -111,9 +111,11 @@ def extract_features_labels(Label):
     if Label == "Train":
         basedir = basedir_train
         images_dir = images_dir_train
+        total_img = len(os.listdir(images_dir_train))
     elif Label == "Test":
         basedir = basedir_test
         images_dir = images_dir_test
+        total_img = len(os.listdir(images_dir_test))
     else:
         raise TypeError("Dataset is unclear labelled")
 
@@ -125,22 +127,24 @@ def extract_features_labels(Label):
     if os.path.isdir(images_dir):
         all_features = []
         all_labels = []
-
-        for img_path in image_paths:
-            file_name = img_path.split("\\")[-1].split(".")[0]
-            # load image
-            img = image.img_to_array(
-                image.load_img(
-                    img_path, target_size=target_size, interpolation="bicubic"
+        with tqdm(total=total_img, unit="img", desc="Loading " + Label + " Dataset") as pbar:
+            for img_path in image_paths:
+                file_name = img_path.split("\\")[-1].split(".")[0]
+                # load image
+                img = image.img_to_array(
+                    image.load_img(
+                        img_path,
+                        target_size=target_size,
+                        interpolation="bicubic",
+                    )
                 )
-            )
-            features, _ = run_dlib_shape(img)
-            if features is not None:
-                all_features.append(features)
-                all_labels.append(int(gender_labels[int(file_name)]))
+                features, _ = run_dlib_shape(img)
+                if features is not None:
+                    all_features.append(features)
+                    all_labels.append(int(gender_labels[int(file_name)]))
+                pbar.update(1)
 
     landmark_features = np.array(all_features)
-    gender_labels = (
-        np.array(all_labels) + 1
-    ) / 2  # simply converts the -1 into 0, so male=0 and female=1
+    # simply converts the -1 into 0, so male=0 and female=1
+    gender_labels = (np.array(all_labels) + 1) / 2
     return landmark_features, gender_labels
