@@ -4,7 +4,6 @@ from importlib.machinery import SourceFileLoader
 
 import src.landmarks as lm
 from A1.SVM import SVM
-from src.loading import *
 
 
 def Load_data(type):
