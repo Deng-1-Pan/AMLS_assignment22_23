@@ -2,9 +2,8 @@ import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-from sklearn import svm, datasets
-from sklearn.svm import SVC
-from sklearn.metrics import classification_report, accuracy_score
+from sklearn import svm
+from sklearn.metrics import accuracy_score
 from alive_progress import alive_bar
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
