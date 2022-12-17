@@ -39,11 +39,9 @@ def solve_A1():
 
     # Supervised feature selection method:
     # SVM
-    A1_SVM_pred = SVM(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])),
-                      train_labels,
-                      features_test.reshape(
-                          (features_test.shape[0], features_test.shape[1]*features_test.shape[2])),
-                      test_labels)
+    SVM(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels,
+                      features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels)
+    
     return None
 
 
