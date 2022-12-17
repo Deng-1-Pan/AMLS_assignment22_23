@@ -32,7 +32,7 @@ def SVM(train_data, train_labels, test_data, test_labels):
     # plt.show()
 
     best_C = C[np.where(cv_scores == max(cv_scores))[0][0]]
-    print(f'The best regularization parameter is {best_C}')
+    print(f'The best regularization parameter is {best_C} with average accuracy {cv_scores[C.index(best_C)]}')
     
     # Training the best model
     best_svm = svm.LinearSVC(C=best_C, dual=False)
