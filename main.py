@@ -3,7 +3,7 @@ import numpy as np
 from importlib.machinery import SourceFileLoader
 
 import src.landmarks as lm
-from A1.SVM import SVM
+from A1.Training_Models import Model_Training_Testing
 
 
 def Load_data(type):
@@ -15,12 +15,12 @@ def Load_data(type):
         # testing_datasets = pd.read_csv('./Datasets/dataset_AMLS_22-23_test/celeba_test/labels.csv', sep='\t', index_col=0)
         # with Loader("Loading the dataset..."):
         features_train, train_labels = lm.extract_features_labels("Train")
-        features_test, labels_test = lm.extract_features_labels("Test")
+        features_test, test_labels = lm.extract_features_labels("Test")
         print("\n")
         print(
             "==============================Data loading complete=============================="
         )
-        return features_train, train_labels, features_test, labels_test
+        return features_train, train_labels, features_test, test_labels
     else:
         datasets = pd.read_csv(
             "./Datasets/dataset_AMLS_22-23/cartoon_set/labels.csv",
@@ -36,11 +36,18 @@ def solve_A1():
     )
 
     features_train, train_labels, features_test, test_labels = Load_data("A")
-
+    
     # Supervised feature selection method:
-    # SVM
-    SVM(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels,
-                      features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels)
+    # Support vector machine (SVM)
+    Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels,
+                      features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, 'SVM')
+    # K-nearest neighbors (KNN)
+    Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels,
+                      features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, 'KNN')
+    # Random forest (RF)
+    Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels,
+                      features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, 'RF')
+    
     
     return None
 
