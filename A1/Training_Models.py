@@ -1,12 +1,13 @@
+import time
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
+from tqdm import tqdm
 from sklearn import svm
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier 
 from sklearn.metrics import accuracy_score
-from alive_progress import alive_bar
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 
@@ -18,7 +19,7 @@ def model_para(model_index, model, i):
     elif model_index == 1:
         model.n_neighbors = i
     elif model_index == 2:
-        modeln_estimators = i
+        model.n_estimators = i
     
     return model
         
@@ -42,18 +43,18 @@ def Model_Training_Testing(train_data, train_labels, test_data, test_labels, mod
     # KNN k parameter
     list_para[1] = list(range(1,int(np.rint(np.sqrt(len(train_data))))))
     # RF n_estimators parameter
-    list_para[2] = list(range(50,150,10))
+    list_para[2] = list(range(268, 274))
     
     
 
     # Tunning the hyperparameter
     parameter_scores = []
-    with alive_bar(len(list_para[model_index]), force_tty=True, title='Training', bar='classic', theme='classic') as bar:
+    with tqdm(total=len(list_para[model_index]), desc="Training on " + model_name) as pbar:
         for i in list_para[model_index]:
             train_model = model_para(model_index, model, i)
             scores = cross_val_score(train_model, train_data, train_labels, cv=10, scoring='accuracy')
             parameter_scores.append(scores.mean())
-            bar()
+            pbar.update(1)
             
     best_para_index = np.where(parameter_scores == max(parameter_scores))[0][0]
     best_para = list_para[model_index][best_para_index]
@@ -61,10 +62,13 @@ def Model_Training_Testing(train_data, train_labels, test_data, test_labels, mod
 
     # Training the best model
     best_model = model_para(model_index, model, best_para)
+    t1 = time.perf_counter()
     best_model.fit(train_data, train_labels)
-    best_model_pred = best_model.predict(test_data)
+    t2 = time.perf_counter()
+    print(f"Training Completed! Time used: {t2-t1}s")
     
     # Validation
+    best_model_pred = best_model.predict(test_data)
     print('{} precision : {:.2f}'.format(model_name, precision_score(best_model_pred, test_labels)))
     print('{} recall    : {:.2f}'.format(model_name, recall_score(best_model_pred, test_labels)))
     print('{} Accuracy Score: {:.2f}'.format(model_name, accuracy_score(test_labels, best_model_pred)))
