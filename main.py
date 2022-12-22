@@ -35,22 +35,21 @@ def solve_A1():
     )
 
     features_train, train_labels, features_test, test_labels = Load_data("A")
-    
+
     print(
         "=========================+====Training the model selected========================="
     )
     # Supervised feature selection method:
     # Support vector machine (SVM)
     Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels,
-                      features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, 'SVM')
+                           features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, 'SVM')
     # K-nearest neighbors (KNN)
     Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels,
-                      features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, 'KNN')
+                           features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, 'KNN')
     # Random forest (RF)
     Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels,
-                      features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, 'RF')
-    
-    
+                           features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, 'RF')
+
     return None
 
 
