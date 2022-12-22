@@ -65,7 +65,7 @@ def Model_Training_Testing(train_data, train_labels, test_data, test_labels, mod
     t1 = time.perf_counter()
     best_model.fit(train_data, train_labels)
     t2 = time.perf_counter()
-    print(f"Training Completed! Time used: {t2-t1}s")
+    print(f"Training Completed! Time used: {t2-t1:.2f}s")
     
     # Validation
     best_model_pred = best_model.predict(test_data)
