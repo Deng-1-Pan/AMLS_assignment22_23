@@ -105,8 +105,8 @@ def extract_features_labels(Label):
     It also extracts the gender label for each image.
     :return:
         landmark_features:  an array containing 68 landmark points for each image in which a face was detected
-        gender_labels:      an array containing the gender label (male=0 and female=1) for each image in
-                            which a face was detected
+        all_labels: an array containing both gender label (male=0 and female=1) and smiling label (not smiling = 0 and smiling = 1)
+                    for each image in which a face was detected
     """
     if Label == "Train":
         basedir = basedir_train
@@ -124,9 +124,10 @@ def extract_features_labels(Label):
     labels_file = open(os.path.join(basedir, labels_filename), "r")
     lines = labels_file.readlines()
     gender_labels = [line.split("\t")[2] for line in lines[1:]]
+    smiling_labels = [line.split("\t")[3] for line in lines[1:]]
     if os.path.isdir(images_dir):
         all_features = []
-        all_labels = []
+        all_labels = [[] * 1 for _ in range(2)]
         with tqdm(total=total_img, unit="img", desc="Loading " + Label + " Dataset") as pbar:
             for img_path in image_paths:
                 file_name = img_path.split("\\")[-1].split(".")[0]
@@ -141,10 +142,11 @@ def extract_features_labels(Label):
                 features, _ = run_dlib_shape(img)
                 if features is not None:
                     all_features.append(features)
-                    all_labels.append(int(gender_labels[int(file_name)]))
+                    all_labels[0].append(int(gender_labels[int(file_name)]))
+                    all_labels[1].append(int(smiling_labels[int(file_name)]))
                 pbar.update(1)
 
     landmark_features = np.array(all_features)
     # simply converts the -1 into 0, so male=0 and female=1
-    gender_labels = (np.array(all_labels) + 1) / 2
+    all_labels = (np.array(all_labels) + 1) / 2
     return landmark_features, gender_labels
