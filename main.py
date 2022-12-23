@@ -3,7 +3,8 @@ import pandas as pd
 # from importlib.machinery import SourceFileLoader
 
 import src.landmarks as lm
-from A1.Training_Models import Model_Training_Testing
+from A1.Training_Models_A1 import Model_Training_Testing_A1
+from A2.training_Models_A2 import Model_Training_Testing_A2
 
 
 def Load_data(type):
@@ -34,8 +35,8 @@ def solve_A1(features_train, train_labels, features_test, test_labels):
     # Support vector machine (SVM), K-nearest neighbors (KNN), Random forest (RF) and Adaboost
     Model_Options = ['SVM', 'KNN', 'RF', 'AdaBoost']
     for model in Model_Options:
-        Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels[0],
-                               features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels[0], model)
+        Model_Training_Testing_A1(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels[0],
+                                  features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels[0], model)
     print("==============================Task A1 Completed!==============================")
     return None
 
@@ -45,8 +46,8 @@ def solve_A2(features_train, train_labels, features_test, test_labels):
     # Support vector machine (SVM), K-nearest neighbors (KNN), Random forest (RF) and Adaboost
     Model_Options = ['SVM', 'KNN', 'RF', 'AdaBoost']
     for model in Model_Options:
-        Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels[1],
-                               features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels[1], model)
+        Model_Training_Testing_A2(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels[1],
+                                  features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels[1], model)
     print("==============================Task A2 Completed!==============================")
     return None
 
