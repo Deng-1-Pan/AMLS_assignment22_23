@@ -90,7 +90,8 @@ def Model_Training_Testing(train_data, train_labels, test_data, test_labels, mod
         print(f"Training Completed! Time used: {t2-t1:.2f}s")
 
     else:
-        best_model = GridSearchCV(model, {'learning_rate': list_para[3]})
+        best_model = GridSearchCV(
+            model, {'learning_rate': list_para[3]}, cv=10, scoring='accuracy')
         t1 = time.perf_counter()
         best_model.fit(test_data, test_labels)
         t2 = time.perf_counter()
