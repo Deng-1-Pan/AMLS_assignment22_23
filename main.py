@@ -43,8 +43,8 @@ def solve_A1():
     # Support vector machine (SVM), K-nearest neighbors (KNN), Random forest (RF) and Adaboost
     Model_Options = ['SVM', 'KNN', 'RF', 'AdaBoost']
     for model in Model_Options:
-        Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels,
-                               features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels, model)
+        Model_Training_Testing(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels[0],
+                               features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels[0], model)
 
     return None
 
