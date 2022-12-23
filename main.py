@@ -4,7 +4,7 @@ import pandas as pd
 
 import src.landmarks as lm
 from A1.Training_Models_A1 import Model_Training_Testing_A1
-from A2.training_Models_A2 import Model_Training_Testing_A2
+from A2.Training_Models_A2 import Model_Training_Testing_A2
 
 
 def Load_data(type):
