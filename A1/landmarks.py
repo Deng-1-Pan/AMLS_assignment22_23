@@ -16,7 +16,7 @@ images_dir_train = os.path.join(basedir_train, "img")
 images_dir_test = os.path.join(basedir_test, "img")
 labels_filename = "labels.csv"
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor("./src/shape_predictor_68_face_landmarks.dat")
+predictor = dlib.shape_predictor("./A1/shape_predictor_68_face_landmarks.dat")
 
 
 # how to find frontal human faces in an image using 68 landmarks.  These are points on the face such as the corners of the mouth, along the eyebrows, on the eyes, and so forth.
@@ -125,6 +125,7 @@ def extract_features_labels(Label):
     lines = labels_file.readlines()
     gender_labels = [line.split("\t")[2] for line in lines[1:]]
     smiling_labels = [line.split("\t")[3] for line in lines[1:]]
+    
     if os.path.isdir(images_dir):
         all_features = []
         all_labels = [[] * 1 for _ in range(2)]
@@ -132,13 +133,9 @@ def extract_features_labels(Label):
             for img_path in image_paths:
                 file_name = img_path.split("\\")[-1].split(".")[0]
                 # load image
-                img = image.img_to_array(
-                    image.load_img(
-                        img_path,
-                        target_size=target_size,
-                        interpolation="bicubic",
-                    )
-                )
+                img = image.img_to_array(image.load_img(img_path, 
+                                                        target_size=target_size,
+                                                        interpolation="bicubic",))
                 features, _ = run_dlib_shape(img)
                 if features is not None:
                     all_features.append(features)
@@ -147,6 +144,6 @@ def extract_features_labels(Label):
                 pbar.update(1)
 
     landmark_features = np.array(all_features)
-    # simply converts the -1 into 0, so male=0 and female=1
+    # simply converts the -1 into 0, so male=0 and female=1; non-smiling=0 and smiling=1
     all_labels = (np.array(all_labels) + 1) / 2
-    return landmark_features, gender_labels
+    return landmark_features, all_labels
