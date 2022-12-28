@@ -119,13 +119,16 @@ def extract_features_labels(Label):
     else:
         raise TypeError("Dataset is unclear labelled")
 
-    image_paths = [os.path.join(images_dir, l) for l in os.listdir(images_dir)]
+    images_dir_sorted = os.listdir(images_dir)
+    images_dir_sorted.sort(key=lambda x: int(x[:-4]))
+
+    image_paths = [os.path.join(images_dir, l) for l in images_dir_sorted]
     target_size = None
     labels_file = open(os.path.join(basedir, labels_filename), "r")
     lines = labels_file.readlines()
     gender_labels = [line.split("\t")[2] for line in lines[1:]]
     smiling_labels = [line.split("\t")[3] for line in lines[1:]]
-    
+
     if os.path.isdir(images_dir):
         all_features = []
         all_labels = [[] * 1 for _ in range(2)]
@@ -133,9 +136,9 @@ def extract_features_labels(Label):
             for img_path in image_paths:
                 file_name = img_path.split("\\")[-1].split(".")[0]
                 # load image
-                img = image.img_to_array(image.load_img(img_path, 
+                img = image.img_to_array(image.load_img(img_path,
                                                         target_size=target_size,
-                                                        interpolation="bicubic",))
+                                                        interpolation="bicubic"))
                 features, _ = run_dlib_shape(img)
                 if features is not None:
                     all_features.append(features)
