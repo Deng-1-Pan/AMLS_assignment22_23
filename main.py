@@ -1,8 +1,9 @@
-import pandas as pd
+# import pandas as pd
 # import numpy as np
 # from importlib.machinery import SourceFileLoader
 
-import src.landmarks as lm
+import A1.landmarks as lm
+# import A2.feature_extraciton as fx
 from A1.Training_Models_A1 import Model_Training_Testing_A1
 from A2.Training_Models_A2 import Model_Training_Testing_A2
 
@@ -12,22 +13,26 @@ def Load_data(type):
         print(
             "==============================Loading data for Task A=============================\n"
         )
-        # training_datasets = pd.read_csv('./Datasets/dataset_AMLS_22-23/celeba/labels.csv', sep='\t', index_col=0)
-        # testing_datasets = pd.read_csv('./Datasets/dataset_AMLS_22-23_test/celeba_test/labels.csv', sep='\t', index_col=0)
-        # with Loader("Loading the dataset..."):
+
         features_train, train_labels = lm.extract_features_labels("Train")
         features_test, test_labels = lm.extract_features_labels("Test")
+
         print(
             "\n==============================Data loading complete===============================\n"
         )
         return features_train, train_labels, features_test, test_labels
     else:
-        datasets = pd.read_csv(
-            "./Datasets/dataset_AMLS_22-23/cartoon_set/labels.csv",
-            sep="\t",
-            index_col=0,
+        print(
+            "==============================Loading data for Task B=============================\n"
         )
-        return datasets
+
+        # features_train, train_labels = fx.extract_features_labels("Train")
+        # features_test, test_labels = fx.extract_features_labels("Test")
+
+        print(
+            "\n==============================Data loading complete===============================\n"
+        )
+        return features_train, train_labels, features_test, test_labels
 
 
 def solve_A1(features_train, train_labels, features_test, test_labels):
@@ -78,7 +83,10 @@ def main():
     solve_A2(features_train, train_labels, features_test, test_labels)
 
     # For part B
+    # Loading Data
+    print("==============================Task B1 start to solve==============================")
     datasets = Load_data("B")
+
     solve_B1(datasets)
     solve_B2(datasets)
 
