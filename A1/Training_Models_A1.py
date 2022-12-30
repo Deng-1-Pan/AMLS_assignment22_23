@@ -41,16 +41,13 @@ def Model_Select(train_data, model_name):
         model = RandomForestClassifier(random_state=random_seed)
         model_index = 2
     elif model_name == 'AdaBoost':
-        model = AdaBoostClassifier(algorithm='SAMME',
-                                   base_estimator=svm.LinearSVC(
-                                       C=0.01, dual=False, random_state=random_seed),
-                                   random_state=random_seed)
+        model = AdaBoostClassifier(random_state=random_seed)
         model_index = 3
 
     # List to store the parameter to be tunned
     list_para = [[] * 1 for _ in range(4)]
     # SVM regularization parameter C
-    list_para[0] = [1e-3, 1e-2, 0.1, 1, 10, 1e2, 1e3]
+    list_para[0] = list(np.linspace(0.01, 10, 50))
     # KNN k parameter
     list_para[1] = list(range(1, int(np.rint(np.sqrt(len(train_data))))))
     # RF n_estimators parameter
@@ -112,7 +109,7 @@ def Model_Training_Testing_A1(train_data, train_labels, test_data, test_labels, 
           f1_score(best_model_pred, test_labels)))
 
     confusion_mat = confusion_matrix(
-        test_labels, best_model_pred, labels=[1, 0])
+        test_labels, best_model_pred, labels=best_model.classes_)
     print('This is the confusion matrix:')
     plt.figure(num=f'Confusion Matrix A1 {model_name}')
     plt.title(f'Confusion Matrix A1 {model_name}')
