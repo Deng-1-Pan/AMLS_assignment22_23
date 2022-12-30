@@ -15,10 +15,11 @@ images_dir_test = os.path.join(basedir_test, "img")
 labels_filename = "labels.csv"
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor("./A1/shape_predictor_68_face_landmarks.dat")
-Label = "Train"
+# Label = "Train"
 
-# def extract_features_labels(Label):
-if __name__ == "__main__":
+
+def extract_features_labels(Label):
+    # if __name__ == "__main__":
 
     def shape_to_np(shape, dtype="int"):
         # initialize the list of (x, y)-coordinates
@@ -99,9 +100,11 @@ if __name__ == "__main__":
 
         image = cv2.imread(img_path)
 
+        # Extract eyes Features from dlib detector
         features_left_eye = features[eye_start_points:eye_end_point][:6]
         features_right_eye = features[eye_start_points:eye_end_point][6:]
 
+        # Find the region which encompassed by those eyes feawtures points
         features_left_eye = extract_features_from_img(
             np.transpose(features_left_eye), image)
         features_right_eye = extract_features_from_img(
@@ -119,6 +122,8 @@ if __name__ == "__main__":
     def resize_feature(features_left_eye, features_right_eye):
 
         dim_1_list, dim_2_list = [], []
+
+        # get the dimension of eyes region matrix
         for i in range(len(features_left_eye)):
             dim_1_list.append(features_left_eye[i].shape[0])
             dim_1_list.append(features_right_eye[i].shape[0])
@@ -130,6 +135,7 @@ if __name__ == "__main__":
         dim_1 = int(np.mean(dim_1_list))
         dim_2 = int(np.mean(dim_2_list))
 
+        # resize the region with the avg dimension
         features_eyes = []
         for i in range(len(features_left_eye)):
             resized_left_eye_features = np.resize(
@@ -186,7 +192,7 @@ if __name__ == "__main__":
                     # load image
                     img = image.img_to_array(image.load_img(img_path,
                                                             target_size=target_size,
-                                                            interpolation="bicubic",))
+                                                            interpolation="bicubic"))
                     features, _ = run_dlib_shape(img)
                     if features is not None:
                         face_features.append(
@@ -210,8 +216,11 @@ if __name__ == "__main__":
         eye_features = resize_feature(features_left_eye, features_right_eye)
         # a = features_train['Eyes'][0][1] to see diff image features
         all_features['Eyes'].append(np.array(eye_features))
+
+        all_features = {k: np.array(v) for k, v in all_features.items()}
         # simply converts the -1 into 0, so male=0 and female=1; non-smiling=0 and smiling=1
         all_labels = (np.array(all_labels) + 1) / 2
+
         return all_features, all_labels
 
-    features_train, train_labels = extract_features_labels("Train")
+    # features_train, train_labels = extract_features_labels("Train")
