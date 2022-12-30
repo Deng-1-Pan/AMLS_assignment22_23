@@ -47,7 +47,7 @@ def Model_Select(train_data, model_name):
     # List to store the parameter to be tunned
     list_para = [[] * 1 for _ in range(4)]
     # SVM regularization parameter C
-    list_para[0] = list(np.linspace(0.01, 10, 50))
+    list_para[0] = list(np.linspace(0.01,10,50))
     # KNN k parameter
     list_para[1] = list(range(1, int(np.rint(np.sqrt(len(train_data))))))
     # RF n_estimators parameter
