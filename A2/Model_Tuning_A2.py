@@ -16,48 +16,57 @@ features_train, train_labels = lm.extract_features_labels("Train")
 features_test, test_labels = lm.extract_features_labels("Test")
 
 # Reshape the data to fit the model
-A2_train = features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2]))
+A2_train = features_train.reshape(
+    (features_train.shape[0], features_train.shape[1]*features_train.shape[2]))
 A2_train_labels = train_labels[1]
-A2_test = features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2]))
+A2_test = features_test.reshape(
+    (features_test.shape[0], features_test.shape[1]*features_test.shape[2]))
 A2_test_labels = test_labels[1]
 # Normalization
 scaler = StandardScaler()
 A2_train_data = scaler.fit_transform(A2_train)
 A2_test_data = scaler.fit_transform(A2_test)
 # Split Train and Validation
-A2_train_data, A2_Validation_data, A2_train_labels, A2_Validation_labdels = train_test_split(A2_train_data, A2_train_labels, test_size=0.3, random_state=1)
+A2_train_data, A2_Validation_data, A2_train_labels, A2_Validation_labdels = train_test_split(
+    A2_train_data, A2_train_labels, test_size=0.3, random_state=1)
 
-classifiers = [svm.LinearSVC(dual=False, random_state=0, fit_intercept = False),
-               svm.SVC(random_state = 0),
+classifiers = [svm.LinearSVC(dual=False, random_state=0, fit_intercept=False),
+               svm.SVC(random_state=0),
                KNeighborsClassifier(),
                RandomForestClassifier(random_state=0),
                AdaBoostClassifier(random_state=0)]
-parameter_spaces = [{'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2]} ,
-                    {'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2], 
-                    	'degree' : [3, 4, 5, 6],
-                                  'kernel': ['rbf', 'poly']},
+parameter_spaces = [{'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2]},
+                    {'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2],
+                        'degree': [3, 4, 5, 6],
+                     'kernel': ['rbf', 'poly']},
                     {'n_neighbors': list(range(1, 1 + int(np.rint(np.sqrt(len(A2_train_data)+len(A2_Validation_data)))))),
-                                        'weights': ['uniform', 'distance'],
-                                        'p' : [1, 2]} ,
-                    {'n_estimators': list(range(100, 1001, 100))} ,
+                     'weights': ['uniform', 'distance'],
+                     'p': [1, 2]},
+                    {'n_estimators': list(range(100, 1001, 100))},
                     {'learning_rate': [1e-4, 5e-4, 1e-3, 5e-3, 1e-2, 5e-2, 0.1, 0.5, 1]}]
 
 for i in range(len(classifiers)):
-   classifier = classifiers[i]
-   print('Tuning on model ' + str(classifier))
-   tuning_model = GridSearchCV(classifier, parameter_spaces[i], scoring = 'accuracy', n_jobs=-1, cv = 5)
-   tuning_model.fit(A2_train_data, A2_train_labels)
-   print('Best parameters found for:\n' + str(classifier), tuning_model.best_params_)
-   
-   acc_train = accuracy_score(A2_train_labels, tuning_model.predict(A2_train_data))
-   acc_val = accuracy_score(A2_Validation_labdels, tuning_model.predict(A2_Validation_data))
-   acc_test = accuracy_score(A2_test_labels, tuning_model.predict(A2_test_data))
-   print('For Linear SVC the training Accuracy :', acc_train)
-   print('For Linear SVC the validation Accuracy :', acc_val)
-   print('For Linear SVC the test Accuracy :', acc_test)    
-   print('classification_report on the test set:')
-   print(classification_report(A2_test_labels, tuning_model.predict(A2_test_data)))
-   
+    classifier = classifiers[i]
+    print('Tuning on model ' + str(classifier))
+    tuning_model = GridSearchCV(
+        classifier, parameter_spaces[i], scoring='accuracy', n_jobs=-1, cv=5)
+    tuning_model.fit(A2_train_data, A2_train_labels)
+    print('Best parameters found for:\n' +
+          str(classifier), tuning_model.best_params_)
+
+    acc_train = accuracy_score(
+        A2_train_labels, tuning_model.predict(A2_train_data))
+    acc_val = accuracy_score(A2_Validation_labdels,
+                             tuning_model.predict(A2_Validation_data))
+    acc_test = accuracy_score(
+        A2_test_labels, tuning_model.predict(A2_test_data))
+    print('For ' + classifiers[i] + ' the training Accuracy :', acc_train)
+    print('For ' + classifiers[i] + ' the validation Accuracy :', acc_val)
+    print('For ' + classifiers[i] + ' the test Accuracy :', acc_test)
+    print('classification_report on the test set:')
+    print(classification_report(A2_test_labels,
+          tuning_model.predict(A2_test_data)))
+
 # ============================ LinearSVC ======================================
 # Best parameters found:
 #  {'C': 0.01}
@@ -70,7 +79,7 @@ for i in range(len(classifiers)):
 # For Linear SVC the training Accuracy : 0.9207389749702026
 # For Linear SVC the validation Accuracy : 0.8929812369701181
 # For Linear SVC the test Accuracy : 0.9019607843137255
-# Best parameters found: kernel = 'poly'
+# Best parameters found: kernel = 'poly' C = 1
 #  {'degree': 3}
 # For Linear SVC the training Accuracy : 0.9112038140643623
 # For Linear SVC the validation Accuracy : 0.8853370396108409
@@ -100,7 +109,7 @@ for i in range(len(classifiers)):
 
 # parameter_space = {'n_neighbors': list(range(1, int(np.rint(np.sqrt(len(A1_train_data)))))),
 #                     'weights': ['uniform', 'distance'],
-#                     'p' : [1, 2]} 
+#                     'p' : [1, 2]}
 # Best parameters found:
 #  {'n_neighbors': 40, 'p': 1, 'weights': 'distance'}
 # For Linear SVC the training Accuracy : 1.0
