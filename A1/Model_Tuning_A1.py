@@ -48,7 +48,7 @@ classifiers = [svm.LinearSVC(dual=False, random_state=0, fit_intercept=False),
                AdaBoostClassifier(random_state=0)]
 parameter_spaces = [{'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2]},
                     {'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2],
-                    	'degree': [3, 4, 5, 6, 7, 8],
+                        'degree': [3, 4, 5, 6, 7, 8],
                      'kernel': ['rbf', 'poly']},
                     {'n_neighbors': list(
                         range(1, int(np.rint(np.sqrt(len(A1_train_data))))))},
@@ -56,25 +56,26 @@ parameter_spaces = [{'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2]},
                     {'learning_rate': [1e-4, 5e-4, 1e-3, 5e-3, 1e-2, 5e-2, 0.1, 0.5, 1]}]
 
 for i in range(len(classifiers)):
-   classifier = classifiers[i]
-   print('Tuning on model' + str(classifier))
-   tuning_model = GridSearchCV(
-       classifier, parameter_spaces[i], scoring='accuracy', n_jobs=-1, cv=5)
-   tuning_model.fit(A1_train_data, A1_train_labels)
-   print('Best parameters found for:\n' +
-         str(classifier), tuning_model.best_params_)
+    classifier = classifiers[i]
+    print('Tuning on model' + str(classifier))
+    tuning_model = GridSearchCV(
+        classifier, parameter_spaces[i], scoring='accuracy', n_jobs=-1, cv=5)
+    tuning_model.fit(A1_train_data, A1_train_labels)
+    print('Best parameters found for:\n' +
+          str(classifier), tuning_model.best_params_)
 
-   acc_train = accuracy_score(
-       A1_train_labels, tuning_model.predict(A1_train_data))
-   acc_val = accuracy_score(A1_Validation_labdels,
-                            tuning_model.predict(A1_Validation_data))
-   acc_test = accuracy_score(
-       A1_test_labels, tuning_model.predict(A1_test_data))
-   print('For Linear SVC the training Accuracy :', acc_train)
-   print('For Linear SVC the validation Accuracy :', acc_val)
-   print('For Linear SVC the test Accuracy :', acc_test)
-   print('classification_report on the test set:')
-   print(classification_report(A1_test_labels, tuning_model.predict(A1_test_data)))
+    acc_train = accuracy_score(
+        A1_train_labels, tuning_model.predict(A1_train_data))
+    acc_val = accuracy_score(A1_Validation_labdels,
+                             tuning_model.predict(A1_Validation_data))
+    acc_test = accuracy_score(
+        A1_test_labels, tuning_model.predict(A1_test_data))
+    print('For Linear SVC the training Accuracy :', acc_train)
+    print('For Linear SVC the validation Accuracy :', acc_val)
+    print('For Linear SVC the test Accuracy :', acc_test)
+    print('classification_report on the test set:')
+    print(classification_report(A1_test_labels,
+          tuning_model.predict(A1_test_data)))
 
 
 # # ============================ LinearSVC ======================================
