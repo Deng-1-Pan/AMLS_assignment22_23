@@ -3,8 +3,9 @@ import numpy as np
 import cv2
 import dlib
 
-from keras_preprocessing import image
 from tqdm import tqdm
+from keras_preprocessing import image
+from sklearn.preprocessing import StandardScaler
 
 # PATH TO ALL IMAGES
 
@@ -130,7 +131,7 @@ def extract_features_labels(Label):
     smiling_labels = [line.split("\t")[3] for line in lines[1:]]
 
     if os.path.isdir(images_dir):
-        all_features = {'A1': [], 'A2': []}
+        all_features = []
         all_labels = [[] * 1 for _ in range(2)]
         with tqdm(total=total_img, unit="img", desc="Loading " + Label + " Dataset") as pbar:
             for img_path in image_paths:
@@ -141,17 +142,12 @@ def extract_features_labels(Label):
                                                         interpolation="bicubic"))
                 features, _ = run_dlib_shape(img)
                 if features is not None:
-                    all_features['A1'].append(np.array(features))
-                    smile_features_index = [i for i in range(
-                        17, 27)] + [i for i in range(36, 48)]
-                    all_features['A2'].append(
-                        np.array(features[smile_features_index, :]))
+                    all_features.append(np.array(features))
                     all_labels[0].append(int(gender_labels[int(file_name)]))
                     all_labels[1].append(int(smiling_labels[int(file_name)]))
                 pbar.update(1)
 
-    # np.array(all_features)
-    landmark_features = {k: np.array(v) for k, v in all_features.items()}
+    landmark_features = np.array(all_features)
     # simply converts the -1 into 0, so male=0 and female=1; non-smiling=0 and smiling=1
     all_labels = (np.array(all_labels) + 1) / 2
     return landmark_features, all_labels
