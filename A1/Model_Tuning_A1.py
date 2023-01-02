@@ -77,7 +77,6 @@ for i in range(len(classifiers)):
     print(classification_report(A1_test_labels,
           tuning_model.predict(A1_test_data)))
 
-
 # # ============================ LinearSVC ======================================
 # classifier = svm.LinearSVC(dual=False, random_state=0, fit_intercept = False)
 # parameter_space = {'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2]}
