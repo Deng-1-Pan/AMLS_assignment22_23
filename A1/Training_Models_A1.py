@@ -3,9 +3,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 from tqdm import tqdm
-from sklearn.model_selection import KFold
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 
@@ -19,37 +19,18 @@ def Model_Training_Testing_A1(train_data, train_labels, test_data, test_labels):
     scaler = StandardScaler()
     train_data = scaler.fit_transform(train_data)
     test_data = scaler.fit_transform(test_data)
+    # Split Train and Validation
+    train_data, Validation_data, train_labels, Validation_labdels = train_test_split(
+        train_data, train_labels, test_size=0.3, random_state=0)
 
-    # Create a KFold generator with 5 folds
-    kfold = KFold(n_splits=5, shuffle=True, random_state=5)
-
-    precision_score_list, recall_score_list, accuracy_score_list, f1_score_list = [], [], [], []
     # Using K-FLod to validate training dataset
-    with tqdm(total=kfold.get_n_splits(train_data), desc="Validating") as pbar:
-        for train_index, test_index in kfold.split(train_data):
-            # Get the training and testing data for this fold
-            X_train, X_test = train_data[train_index], train_data[test_index]
-            y_train, y_test = train_labels[train_index], train_labels[test_index]
+    with tqdm(desc="Training") as pbar:
+        model.fit(train_data, train_labels)
+        pbar.update(1)
 
-            # Train and evaluate a model on the training and testing data for this fold
-            model.fit(X_train, y_train)
-
-            pred = model.predict(X_test)
-            precision_score_list.append(precision_score(pred, y_test))
-            recall_score_list.append(recall_score(pred, y_test))
-            accuracy_score_list.append(accuracy_score(y_test, pred))
-            f1_score_list.append(f1_score(pred, y_test))
-            pbar.update(1)
-
-    avg_precision = np.mean(precision_score_list)
-    avg_recall = np.mean(recall_score_list)
-    avg_accuracy = np.mean(accuracy_score_list)
-    avg_f1 = np.mean(f1_score_list)
-
-    print(f'\n Avg precision for MLP: {avg_precision:.4f}')
-    print(f'Avg recall for MLP: {avg_recall:.4f}')
-    print(f'Avg accuracy for MLP: {avg_accuracy:.4f}')
-    print(f'Avg f1 score for MLP: {avg_f1:.4f}\n')
+    acc_val = accuracy_score(
+        Validation_labdels, model.predict(Validation_data))
+    print('For MLP the validation Accuracy :', acc_val)
 
     # Inference stage
     pred_test = model.predict(test_data)

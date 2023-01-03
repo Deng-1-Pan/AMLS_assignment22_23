@@ -6,6 +6,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
+from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
@@ -34,7 +35,8 @@ classifiers = [svm.LinearSVC(dual=False, random_state=0, fit_intercept=False),
                svm.SVC(random_state=0),
                KNeighborsClassifier(),
                RandomForestClassifier(random_state=0),
-               AdaBoostClassifier(random_state=0)]
+               AdaBoostClassifier(random_state=0),
+               MLPClassifier(random_state=3, max_iter=5000)]
 parameter_spaces = [{'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2]},
                     {'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2],
                         'degree': [3, 4, 5, 6],
@@ -42,7 +44,13 @@ parameter_spaces = [{'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2]},
                     {'n_neighbors': list(
                         range(1, int(np.rint(np.sqrt(len(A1_train))))))},
                     {'n_estimators': list(range(100, 1001, 100))},
-                    {'learning_rate': [1e-4, 5e-4, 1e-3, 5e-3, 1e-2, 5e-2, 0.1, 0.5, 1]}]
+                    {'learning_rate': [1e-4, 5e-4, 1e-3,
+                                       5e-3, 1e-2, 5e-2, 0.1, 0.5, 1]},
+                    {'hidden_layer_sizes': [(x,) for x in list(range(100, 201, 10))],
+                     'activation': ['tanh', 'relu'],
+                     'alpha': [0.0001, 0.05],
+                     'learning_rate': ['adaptive', 'constant'],
+                     'solver': ['sgd', 'adam']}]
 
 for i in range(len(classifiers)):
     classifier = classifiers[i]
@@ -81,7 +89,7 @@ for i in range(len(classifiers)):
 # For SVM the validation Accuracy : 0.9200833912439194
 # For SVM the test Accuracy : 0.9122807017543859
 
-# # =============================== KNN =========================================
+# =============================== KNN =========================================
 # Best parameters found: KNeighborsClassifier()
 # {'n_neighbors': 33}
 # For Linear SVC the training Accuracy : 0.8218116805721096
@@ -121,6 +129,7 @@ for i in range(len(classifiers)):
 # For Linear SVC the test Accuracy : 0.8544891640866873
 
 # =============================== MLP =========================================
+# Random_seed = 3
 # Best parameters found:
 #  {'activation': 'tanh', 'alpha': 0.0001, 'hidden_layer_sizes': (130,)} 2000 can converge
 # For KNN the training Accuracy : 1.0
@@ -131,3 +140,23 @@ for i in range(len(classifiers)):
 # For KNN the training Accuracy : 0.9713945172824792
 # For KNN the validation Accuracy : 0.9200833912439194
 # For KNN the test Accuracy : 0.9153766769865841
+
+# activation='tanh', solver = 'sgd', learning_rate = 'adaptive', alpha=0.0001, hidden_layer_sizes = (130,)
+# For KNN the training Accuracy : 0.9693087008343266
+# For KNN the validation Accuracy : 0.9159138290479499
+# For KNN the test Accuracy : 0.913312693498452
+
+# solver = 'sgd', alpha=0.0001, hidden_layer_sizes = (130,)
+# For KNN the training Accuracy : 0.9746722288438617
+# For KNN the validation Accuracy : 0.9075747046560111
+# For KNN the test Accuracy : 0.9153766769865841
+
+# solver = 'sgd', learning_rate = 'adaptive', alpha=0.0001, hidden_layer_sizes = (130,)
+# For KNN the training Accuracy : 0.9746722288438617
+# For KNN the validation Accuracy : 0.9068797776233496
+# For KNN the test Accuracy : 0.9153766769865841
+
+# alpha=0.0001, hidden_layer_sizes = (130,)
+# For KNN the training Accuracy : 1.0
+# For KNN the validation Accuracy : 0.9096594857539958
+# For KNN the test Accuracy : 0.9164086687306502
