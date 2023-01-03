@@ -23,7 +23,7 @@ def Model_Training_Testing_A1(train_data, train_labels, test_data, test_labels):
     train_data, Validation_data, train_labels, Validation_labdels = train_test_split(
         train_data, train_labels, test_size=0.3, random_state=0)
 
-    # Training the data
+    # Training the model
     with tqdm(desc="Training") as pbar:
         model.fit(train_data, train_labels)
         pbar.update(1)
