@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 
-def Model_Training_Testing_A1(train_data, train_labels, test_data, test_labels):
+def Model_Training_Testing_B1(train_data, train_labels, test_data, test_labels):
     # Define the model
     model = MLPClassifier(alpha=0.05, hidden_layer_sizes= (180,), learning_rate= 'adaptive', solver= 'sgd', random_state=3, max_iter=10000)
     

@@ -1,11 +1,9 @@
-# import pandas as pd
-# import numpy as np
-# from importlib.machinery import SourceFileLoader
-
 import A1.landmarks as lm
-import A2.feature_extraciton as fx
+import B1.feature_extraction as fx
 from A1.Training_Models_A1 import Model_Training_Testing_A1
 from A2.Training_Models_A2 import Model_Training_Testing_A2
+from B1.Training_Models_B1 import Model_Training_Testing_B1
+from B2.Training_Models_B2 import Model_Training_Testing_B2
 
 
 def Load_data(type):
@@ -36,33 +34,37 @@ def Load_data(type):
 
 
 def solve_A1(features_train, train_labels, features_test, test_labels):
-    # Supervised feature selection method:
-    # Support vector machine (SVM), K-nearest neighbors (KNN), Random forest (RF) and Adaboost
-    Model_Options = ['SVM', 'KNN', 'RF', 'AdaBoost']
-    for model in Model_Options:
-        Model_Training_Testing_A1(features_train['A1'].reshape((features_train['A1'].shape[0], features_train['A1'].shape[1]*features_train['A1'].shape[2])), train_labels[0],
-                                  features_test['A1'].reshape((features_test['A1'].shape[0], features_test['A1'].shape[1]*features_test['A1'].shape[2])), test_labels[0], model)
+
+    Model_Training_Testing_A1(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels[0],
+                              features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels[0])
     print("==============================Task A1 Completed!==============================")
     return None
 
 
 def solve_A2(features_train, train_labels, features_test, test_labels):
-    # Supervised feature selection method:
-    # Support vector machine (SVM), K-nearest neighbors (KNN), Random forest (RF) and Adaboost
-    Model_Options = ['SVM', 'KNN', 'RF', 'AdaBoost']
-    for model in Model_Options:
-        Model_Training_Testing_A2(features_train['A2'].reshape((features_train['A2'].shape[0], features_train['A2'].shape[1]*features_train['A2'].shape[2])), train_labels[1],
-                                  features_test['A2'].reshape((features_test['A2'].shape[0], features_test['A2'].shape[1]*features_test['A2'].shape[2])), test_labels[1], model)
+
+    Model_Training_Testing_A2(features_train.reshape((features_train.shape[0], features_train.shape[1]*features_train.shape[2])), train_labels[1],
+                              features_test.reshape((features_test.shape[0], features_test.shape[1]*features_test.shape[2])), test_labels[1])
     print("==============================Task A2 Completed!==============================")
     return None
 
 
 def solve_B1(features_train, train_labels, features_test, test_labels):
 
+    Model_Training_Testing_B1(features_train['Face'].reshape((features_train['Face'].shape[0], features_train['Face'].shape[1]*features_train['Face'].shape[2])),
+                              train_labels[0],
+                              features_test['Face'].reshape(
+                                  (features_test['Face'].shape[0], features_test['Face'].shape[1]*features_test['Face'].shape[2])),
+                              test_labels[0])
+    print("==============================Task B1 Completed!==============================")
     return None
 
 
 def solve_B2(features_train, train_labels, features_test, test_labels):
+
+    Model_Training_Testing_B2(
+        features_train['Eyes'], train_labels[1], features_test['Eyes'], test_labels[1])
+    print("==============================Task B2 Completed!==============================")
 
     return None
 
@@ -85,7 +87,7 @@ def main():
     # For part B
     # Loading Data
     print("==============================Task B1 start to solve==============================")
-    datasets = Load_data("B")
+    features_train, train_labels, features_test, test_labels = Load_data("B")
 
     # B1
     print("==============================Training the model selected=========================")

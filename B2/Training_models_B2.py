@@ -9,7 +9,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 
-def Model_Training_Testing_A1(train_data, train_labels, test_data, test_labels):
+def Model_Training_Testing_B2(train_data, train_labels, test_data, test_labels):
     # Define the model
     model = KNeighborsClassifier(n_neighbors = 2, p = 1, weights = 'distance', n_jobs = -1)
     
