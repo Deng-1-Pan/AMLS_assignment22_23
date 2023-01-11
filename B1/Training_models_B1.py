@@ -32,10 +32,10 @@ def Model_Training_Testing_B1(train_data, train_labels, test_data, test_labels):
     # Inference stage
     pred_test = model.predict(test_data)
     
-    precision = precision_score(pred_test, test_labels)
-    recall = recall_score(pred_test, test_labels)
+    precision = precision_score(pred_test, test_labels, average = 'macro')
+    recall = recall_score(pred_test, test_labels, average = 'macro')
     accuracy = accuracy_score(test_labels, pred_test)
-    f1 = f1_score(pred_test, test_labels)
+    f1 = f1_score(pred_test, test_labels, average = 'macro')
     
     print(f'Precision on test dataset for MLP Classifier: {precision:.4f}')
     print(f'Recall on test dataset for MLP Classifier: {recall:.4f}')
