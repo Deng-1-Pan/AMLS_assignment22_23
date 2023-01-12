@@ -1,4 +1,3 @@
-import pickle
 import numpy as np
 import B1.feature_extraction as fx
 
