@@ -32,10 +32,10 @@ def Model_Training_Testing_A2(train_data, train_labels, test_data, test_labels):
     accuracy = accuracy_score(test_labels, pred_test)
     f1 = f1_score(pred_test, test_labels)
     
-    print(f'Precision on test dataset for MLP: {precision:.4f}')
-    print(f'Recall on test dataset for MLP: {recall:.4f}')
-    print(f'Accuracy on test dataset for MLP: {accuracy:.4f}')
-    print(f'F1 score on test dataset for MLP: {f1:.4f}\n')
+    print(f'Precision on test dataset for MLP Classifier: {precision:.4f}')
+    print(f'Recall on test dataset for MLP Classifier: {recall:.4f}')
+    print(f'Accuracy on test dataset for MLP Classifier: {accuracy:.4f}')
+    print(f'F1 score on test dataset for MLP Classifier: {f1:.4f}\n')
     
     confusion_mat = confusion_matrix(test_labels, pred_test, labels=model.classes_)
     print('This is the confusion matrix:')
