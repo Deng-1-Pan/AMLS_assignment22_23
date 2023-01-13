@@ -1,8 +1,9 @@
 import numpy as np
 import A1.landmarks as lm
+import matplotlib.pyplot as plt
 
 from sklearn import svm
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import learning_curve
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import AdaBoostClassifier
@@ -11,6 +12,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import classification_report
+
 
 
 # Read the data
@@ -28,9 +30,6 @@ A2_test_labels = test_labels[1]
 scaler = StandardScaler()
 A2_train_data = scaler.fit_transform(A2_train)
 A2_test_data = scaler.fit_transform(A2_test)
-# Split Train and Validation
-A2_train_data, A2_Validation_data, A2_train_labels, A2_Validation_labdels = train_test_split(
-    A2_train_data, A2_train_labels, test_size=0.3, random_state=1)
 
 classifiers = [svm.LinearSVC(dual=False, random_state=0, fit_intercept=False),
                svm.SVC(random_state=0),
@@ -42,7 +41,7 @@ parameter_spaces = [{'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2]},
                     {'C': [1e-3, 1e-2, 0.1, 1, 10, 1e2],
                         'degree': [3, 4, 5, 6],
                         'kernel': ['rbf', 'poly']},
-                    {'n_neighbors': list(range(1, 1 + int(np.rint(np.sqrt(len(A2_train_data)+len(A2_Validation_data)))))),
+                    {'n_neighbors': list(range(1, 1 + int(np.rint(np.sqrt(len(A2_train_data)))))),
                      'weights': ['uniform', 'distance'],
                      'p': [1, 2]},
                     {'n_estimators': list(range(100, 1001, 100))},
@@ -65,115 +64,67 @@ for i in range(len(classifiers)):
 
     acc_train = accuracy_score(
         A2_train_labels, tuning_model.predict(A2_train_data))
-    acc_val = accuracy_score(A2_Validation_labdels,
-                             tuning_model.predict(A2_Validation_data))
     acc_test = accuracy_score(
         A2_test_labels, tuning_model.predict(A2_test_data))
     print('For ' + classifiers[i] + ' the training Accuracy :', acc_train)
-    print('For ' + classifiers[i] + ' the validation Accuracy :', acc_val)
     print('For ' + classifiers[i] + ' the test Accuracy :', acc_test)
     print('classification_report on the test set:')
     print(classification_report(A2_test_labels,
           tuning_model.predict(A2_test_data)))
+    
+# Visualisation training and validation learning curve
+clf_svc = svm.LinearSVC(C = 0.001, dual=False, random_state=0, fit_intercept = False)
+clf_svm = svm.SVC(C = 1, kernel = 'rbf', random_state=0)
+clf_knn = KNeighborsClassifier(n_neighbors = 40, p = 1, weights = 'distance')
+clf_rf = RandomForestClassifier(n_estimators = 400, random_state=0)
+clf_ada = AdaBoostClassifier(learning_rate = 1, random_state=0)
+clf_mlp = MLPClassifier(activation = 'relu', alpha= 0.05, hidden_layer_sizes =(140,), learning_rate = 'adaptive', solver = 'sgd',random_state=3, max_iter=10000)
+
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12.8, 7.2))
+plt.suptitle("Learning Curves")
+for i in [clf_svc, clf_svm, clf_knn, clf_rf, clf_ada, clf_mlp]:
+    train_sizes, train_scores, val_scores = learning_curve(i, A2_train_data, A2_train_labels, cv=5, n_jobs = -1)
+    ax1.plot(train_sizes, np.mean(train_scores, axis=1), 'o-', label= str(type(i)).split('.')[-1].split("'")[0] +" Training Score")
+ax1.set_xlabel("Training Set Size")
+ax1.set_ylabel("Accuracy Score")
+ax1.legend(loc="best", prop = {'size':8})
+ax1.grid()
+for i in [clf_svc, clf_svm, clf_knn, clf_rf, clf_ada, clf_mlp]:
+    train_sizes, train_scores, val_scores = learning_curve(i, A2_train_data, A2_train_labels, cv=5, n_jobs = -1)
+    ax2.plot(train_sizes, np.mean(val_scores, axis=1), 'o-', label= str(type(i)).split('.')[-1].split("'")[0] + " Validation Score")
+ax2.set_xlabel("Training Set Size")
+ax2.set_ylabel("Accuracy Score")
+ax2.legend(loc="best", prop = {'size':8})
+ax2.grid()
+plt.savefig('./A2/learning_curve_A2.png')
 
 
 # ============================ LinearSVC ======================================
-# Best parameters found:
-#  {'C': 0.01}
-# For Linear SVC the training Accuracy : 0.8971990464839095
-# For Linear SVC the validation Accuracy : 0.8922863099374566
-# For Linear SVC the test Accuracy : 0.8864809081527347
+# LinearSVC(dual=False, fit_intercept=False, random_state=0) {'C': 0.001}
+# For LinearSVC(dual=False, fit_intercept=False, random_state=0) the training Accuracy : 0.8886339937434828
+# For LinearSVC(dual=False, fit_intercept=False, random_state=0) the test Accuracy : 0.8875128998968008
+
 # =============================== SVM =========================================
-# Best parameters found: kernel = 'rbf'
-#  {'C': 1}
-# For Linear SVC the training Accuracy : 0.9207389749702026
-# For Linear SVC the validation Accuracy : 0.8929812369701181
-# For Linear SVC the test Accuracy : 0.9019607843137255
-# Best parameters found: kernel = 'poly' C = 1
-#  {'degree': 3}
-# For Linear SVC the training Accuracy : 0.9112038140643623
-# For Linear SVC the validation Accuracy : 0.8853370396108409
-# For Linear SVC the test Accuracy : 0.8957688338493293
+# SVC(random_state=0) {'C': 1, 'degree': 3, 'kernel': 'rbf'}
+# For SVC(random_state=0) the training Accuracy : 0.9226277372262773
+# For SVC(random_state=0) the test Accuracy : 0.8978328173374613
+
 # =============================== KNN =========================================
-# Best parameters found: KNeighborsClassifier()
-#  {'n_neighbors': 27}
-# For Linear SVC the training Accuracy : 0.8879618593563766
-# For Linear SVC the validation Accuracy : 0.8832522585128562
-# For Linear SVC the test Accuracy : 0.8926728586171311
-# Best parameters found: KNeighborsClassifier(weights = 'distance')
-#  {'n_neighbors': 27}
-# For Linear SVC the training Accuracy : 1.0
-# For Linear SVC the validation Accuracy : 0.8839471855455178
-# For Linear SVC the test Accuracy : 0.8926728586171311
-
-# Best parameters found: KNeighborsClassifier(p = 1)
-#  {'n_neighbors': 39}
-# For Linear SVC the training Accuracy : 0.8885578069129917
-# For Linear SVC the validation Accuracy : 0.8874218207088256
-# For Linear SVC the test Accuracy : 0.8988648090815273
-# Best parameters found: KNeighborsClassifier(weights = 'distance', p = 1)
-#  {'n_neighbors': 40}
-# For Linear SVC the training Accuracy : 1.0
-# For Linear SVC the validation Accuracy : 0.8853370396108409
-# For Linear SVC the test Accuracy : 0.8968008255933952
-
-# parameter_space = {'n_neighbors': list(range(1, int(np.rint(np.sqrt(len(A2_train_data)))))),
-#                     'weights': ['uniform', 'distance'],
-#                     'p' : [1, 2]}
-# Best parameters found:
-#  {'n_neighbors': 40, 'p': 1, 'weights': 'distance'}
-# For Linear SVC the training Accuracy : 1.0
-# For Linear SVC the validation Accuracy : 0.8853370396108409
-# For Linear SVC the test Accuracy : 0.8968008255933952
+# KNeighborsClassifier() {'n_neighbors': 40, 'p': 1, 'weights': 'distance'}
+# For KNeighborsClassifier() the training Accuracy : 1.0
+# For KNeighborsClassifier() the test Accuracy : 0.8968008255933952
 
 # ================================ RF =========================================
-# Best parameters found:
-#  {'n_estimators': 900}
-# For Linear SVC the training Accuracy : 1.0
-# For Linear SVC the validation Accuracy : 0.8908964558721334
-# For Linear SVC the test Accuracy : 0.9040247678018576
+# RandomForestClassifier(random_state=0) {'n_estimators': 400}
+# For RandomForestClassifier(random_state=0) the training Accuracy : 1.0
+# For RandomForestClassifier(random_state=0) the test Accuracy : 0.8957688338493293
 
 # ============================== AdaBoost =====================================
-# Best parameters found:
-#  {'learning_rate': 0.5}
-# For Linear SVC the training Accuracy : 0.8957091775923719
-# For Linear SVC the validation Accuracy : 0.8895066018068103
-# For Linear SVC the test Accuracy : 0.8988648090815273
+# AdaBoostClassifier(random_state=0) {'learning_rate': 1}
+# For AdaBoostClassifier(random_state=0) the training Accuracy : 0.8986444212721585
+# For AdaBoostClassifier(random_state=0) the test Accuracy : 0.890608875128999
 
 # =============================== MLP =========================================
-# Random_seed = 3
-# activation='tanh', solver = 'sgd', learning_rate = 'adaptive', alpha=0.0001, hidden_layer_sizes = (130,)
-# For KNN the training Accuracy : 0.9696066746126341
-# For KNN the validation Accuracy : 0.8846421125781793
-# For KNN the test Accuracy : 0.891640866873065
-
-# activation='tanh', solver = 'sgd', alpha=0.0001, hidden_layer_sizes = (130,)
-# For KNN the training Accuracy : 0.9705005959475567
-# For KNN the validation Accuracy : 0.8846421125781793
-# For KNN the test Accuracy : 0.890608875128999
-
-# activation='tanh', alpha=0.0001, hidden_layer_sizes = (130,)
-# For KNN the training Accuracy : 1.0
-# For KNN the validation Accuracy : 0.8776928422515636
-# For KNN the test Accuracy : 0.8802889576883385
-
-# solver = 'sgd', learning_rate = 'adaptive', alpha=0.0001, hidden_layer_sizes = (130,)
-# For KNN the training Accuracy : 0.9749702026221693
-# For KNN the validation Accuracy : 0.8902015288394719
-# For KNN the test Accuracy : 0.8988648090815273
-
-# solver = 'sgd', alpha=0.05, hidden_layer_sizes = (200,)
-# For KNN the training Accuracy : 0.9716924910607867
-# For KNN the validation Accuracy : 0.8922863099374566
-# For KNN the test Accuracy : 0.8895768833849329
-
-#  {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (200,)}
-# For KNN the training Accuracy : 1.0
-# For KNN the validation Accuracy : 0.8902015288394719
-# For KNN the test Accuracy : 0.8823529411764706
-
-# Best parameters found:
-#  {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (100,), 'learning_rate': 'adaptive', 'solver': 'sgd'}
-# For KNN the training Accuracy : 0.9436829558998808
-# For KNN the validation Accuracy : 0.8929812369701181
-# For KNN the test Accuracy : 0.8978328173374613
+# MLPClassifier(max_iter=5000, random_state=3) {'activation': 'relu', 'alpha': 0.05, 'hidden_layer_sizes': (140,), 'learning_rate': 'adaptive', 'solver': 'sgd'}
+# For MLPClassifier(max_iter=5000, random_state=3) the training Accuracy : 0.9705943691345151
+# For MLPClassifier(max_iter=5000, random_state=3) the test Accuracy : 0.8885448916408669
