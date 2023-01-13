@@ -5,32 +5,24 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
 
 
 def Model_Training_Testing_A1(train_data, train_labels, test_data, test_labels):
 
-    model = MLPClassifier(alpha=0.0001, hidden_layer_sizes=(
-        130,), random_state=3, max_iter=5000)
+    model = MLPClassifier(activation='tanh', alpha=.05, hidden_layer_sizes=(
+        180,), learning_rate='adaptive', solver='sgd', random_state=3, max_iter=10000)
 
     # Normalize the data
     scaler = StandardScaler()
     train_data = scaler.fit_transform(train_data)
     test_data = scaler.fit_transform(test_data)
-    # Split Train and Validation
-    train_data, Validation_data, train_labels, Validation_labdels = train_test_split(
-        train_data, train_labels, test_size=0.3, random_state=0)
 
     # Training the model
     with tqdm(desc="Training") as pbar:
         model.fit(train_data, train_labels)
         pbar.update(1)
-
-    acc_val = accuracy_score(
-        Validation_labdels, model.predict(Validation_data))
-    print('For MLP the validation Accuracy :', acc_val)
 
     # Inference stage
     pred_test = model.predict(test_data)

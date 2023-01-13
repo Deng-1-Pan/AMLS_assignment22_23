@@ -7,8 +7,8 @@ from tqdm import tqdm
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score, recall_score, precision_score, confusion_matrix
+
 
 def extract_features(image):
   # Extract the R, G, and B channels
@@ -40,18 +40,10 @@ def Model_Training_Testing_B2(train_data, train_labels, test_data, test_labels):
     train_data = scaler.fit_transform(train_data)
     test_data = scaler.fit_transform(test_data)
 
-    # Split Train and Validation
-    train_data, Validation_data, train_labels, Validation_labdels = train_test_split(
-        train_data, train_labels, test_size=0.3, random_state=1)
-
     # Training the model
     with tqdm(desc="Training") as pbar:
         model.fit(train_data, train_labels)
         pbar.update(1)
-
-    acc_val = accuracy_score(
-        Validation_labdels, model.predict(Validation_data))
-    print('For KNN Classifier the validation Accuracy :', acc_val)
 
     # Inference stage
     pred_test = model.predict(test_data)
