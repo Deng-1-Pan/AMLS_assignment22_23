@@ -74,7 +74,6 @@ clf_ada = AdaBoostClassifier(learning_rate=0.5, random_state=0)
 clf_mlp = MLPClassifier(activation='tanh', alpha=0.05, hidden_layer_sizes=(
     140,), learning_rate='adaptive', solver='adam', random_state=3, max_iter=10000)
 
-
 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12.8, 7.2))
 plt.suptitle("Learning Curves")
 for i in [clf_svc, clf_svm, clf_knn, clf_rf, clf_ada, clf_mlp]:
